@@ -205,7 +205,10 @@ def newGame():
                     timerThread.setTime(numsets*difficulty.difficulty*10)
                 except:
                     timerThread = Countdown(root,numsets*difficulty.difficulty*10,uicountdown,myField)
-                timerThread.start()
+                try:
+                    timerThread.start()
+                except:
+                    pass
             else:
                 uicountdown.config(text='Untimed Mode')
                 if timerThread is not None:
