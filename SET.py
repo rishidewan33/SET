@@ -197,7 +197,7 @@ def newGame():
             myDeck.shuffleDeck()
             myField.createNewField(myDeck)
         else:
-            print [map(lambda x: x+1,i) for i in g.visited] #list of sets printed for testing purposes (a.k.a. Solutions)
+            #print [map(lambda x: x+1,i) for i in g.visited] #list of sets printed for testing purposes (a.k.a. Solutions)
             uisetsremain.config(text='There are ' + str(numsets) + ' Set(s) remaining on the board.')
             uisetsremain.place(x=(root.winfo_width()-uisetsremain.winfo_width())/2)
             if timedMode:
