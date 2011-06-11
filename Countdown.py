@@ -51,7 +51,7 @@ class Countdown(threading.Thread): #Timer class for timed mode.
                 loserLBL.pack()
                 loserBTN.pack()
                 loserTL.bind("<Return>",lambda e:loserTL.destroy())
-                loserTL.geometry("+%d+%d"%(self.root.winfo_screenwidth()/2,self.root.winfo_screenheight()/2))
+                loserTL.place(x=self.root.winfo_screenwidth()/2,y=self.root.winfo_screenheight()/2)
             self.__init__(self.root,0,self.uicd,self.field) #Re-initialize whenever we need to restart the timer.
         except RuntimeError: #Thrown when program exits and this thread is still running. We destroy the timer.
             pass
