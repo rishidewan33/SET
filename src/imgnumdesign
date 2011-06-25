@@ -36,5 +36,3 @@ Formula for Number = CardNum % 3
 
 Overall Formula
 27*Shading + 9*Shape + 3*Color + Number
-
-How to verify and print set
