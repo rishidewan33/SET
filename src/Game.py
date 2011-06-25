@@ -218,10 +218,10 @@ class Game(object):
     def changeGameDifficulty(self,i,f):
         if (self.gamediff == i and self.beginnerFlag == f):
             return False
-        assert i >= -1 and i < 2
+        assert i == 0 or i == 1
 
         self.gamediff = i
-        self.beginnerFlag = f
+        self.beginnerFlag = f and not self.gamediff #Assures that the difficulty cannot be Advanced, with the beginner flag open.
         self.UseDeck = self.BeginnersDeck if f else self.NormalDeck
         return True
 
