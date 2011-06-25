@@ -244,7 +244,7 @@ class GUIHandler:
         self.Game.resetGame()
         self.updateCardsOnField(self.Game.Field)
         self.remainderLabel.config(text="There are %d set(s) remaining on the board." % self.Game.numSetsTotal)
-        print self.Game.setsListTotal
+        #print self.Game.setsListTotal
         
     def _destroyAllButtons(self):
 
