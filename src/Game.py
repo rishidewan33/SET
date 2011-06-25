@@ -221,7 +221,7 @@ class Game(object):
         assert i == 0 or i == 1
 
         self.gamediff = i
-        self.beginnerFlag = f and not self.gamediff #Assures that the difficulty cannot be Advanced, with the beginner flag open.
+        self.beginnerFlag = f and not self.gamediff #Assures that the difficulty cannot be Advanced, with the beginner flag true.
         self.UseDeck = self.BeginnersDeck if f else self.NormalDeck
         return True
 
