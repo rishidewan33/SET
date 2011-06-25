@@ -59,3 +59,5 @@ Ok, it's still a work in progress, as I intend to introduce these features:
 - Hint feature for those who tend to go crazy trying to solve a puzzle.
 
 - About section (for info purposes, I guess)
+
+- Doxygen Documentation, which requires further documentation of the source code.
