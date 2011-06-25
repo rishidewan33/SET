@@ -1,0 +1,61 @@
+This program is a clone GUI application of the SET Puzzle Card Game completely written in Python 2.6.
+
+To run this program, simply cd into the src folder and run the following command:
+
+$ python SETMain.py
+
+This is assuming that your Python interpreter has the Tkinter GUI toolkit properly configured.
+
+
+Boring story behind the project:
+
+I started this project back in the Summer of 2010 after doing some of the SET puzzles on the website.
+However, because of my lack of knowledge with the Tkinter toolkit, I left it to die after writing it
+for a few weeks. I later came across this project a few days ago and scrapped it and rewrote it in 2 days.
+
+This program was my introduction to GUI Programming in general. The difficult part of writing this was
+figuring out the Tkinter API, as well as designing how the gaming backend interface communicated with
+the GUI frontend of the program.
+
+/Boring story
+
+From the rules page of the SET website (www.setgame.com):
+
+---------------------------------------------------------------------------------------------------------------------
+The object of the game is to identify a 'set' of three cards from 12 cards laid out on the table. Each card has a variation of the following four features:
+
+(A) Color:
+Each card is red, green, or purple.
+
+(B) Symbol:
+Each card contains ovals, squiggles, or diamonds.
+
+(C) Number:
+Each card has one, two, or three symbols.
+
+(D) Shading: Each card is solid, open, or striped.
+
+A 'Set' consists of three cards in which each feature is EITHER the same on each card OR is different on each card.
+That is to say, any feature in the 'Set' of three cards is either common to all three cards or is different on each card.
+---------------------------------------------------------------------------------------------------------------------
+
+The gameplay is primarily based on the SET daily puzzle on the SET website.
+
+For more in-depth information, see: http://www.setgame.com/set/rules_set.htm
+
+A good amount of features are currently written in the game such as:
+
+- Beginner, Novice, and Advanced difficulties.
+{Beginner = 27 card deck where all cards have solid shading and 9 cards on the field and 4 sets to find.
+Novice = All 81 cards with 9 cards on the field and 4 sets to find.
+Advanced All 81 cards with 12 cards on the field and 6 sets to find.}
+
+- Untimed Mode for players who don't want to be pressured while playing the game.
+
+Ok, it's still a work in progress, as I intend to introduce these features:
+
+- Timed Mode for those who do want to be pressured while playing the game.
+
+- Hint feature for those who tend to go crazy trying to solve a puzzle.
+
+- About section (for info purposes, I guess)
