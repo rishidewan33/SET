@@ -29,5 +29,11 @@ class Card(object):
 
         return (27*self.shading + 9*self.shape + 3*self.color + self.number)
 
+    def __setattr__(self, key, value):
+        assert type(value) == int
+        if value > 2 or value < 0:
+            return
+        self.__dict__[key] = value
+
     def __str__(self):
         return 'Color: %d, Shape: %d, Number: %d, Shading: %d\n' % (self.color,self.shape,self.number,self.shading)
