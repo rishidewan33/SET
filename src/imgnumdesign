@@ -1,0 +1,40 @@
+The Building Block of the Game = Card
+
+media/ configuration:
+
+Shading:
+
+Solid = 0
+Stripped = 1
+Open = 2
+
+Formula for Shading = CardNum//27
+
+Shape:
+
+Squiggle = 0
+Diamond = 1
+Oval = 2
+
+Formula for Shape = (CardNum%27)//9
+
+Color:
+
+Red = 0
+Purple = 1
+Green = 2
+
+Formula for Color = (CardNum%9)//3
+
+Number:
+
+1 = 0
+2 = 1
+3 = 2
+
+Formula for Number = CardNum % 3
+
+Overall Formula
+27*Shading + 9*Shape + 3*Color + Number
+
+How to verify and print set
