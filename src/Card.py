@@ -27,7 +27,7 @@ class Card(object):
 
     def getCardImgNumber(self):
 
-        return (27*self.shading + 9*self.shape + 3*self.color + self.number)
+        return 27*self.shading + 9*self.shape + 3*self.color + self.number
 
     def __setattr__(self, key, value):
         assert type(value) == int

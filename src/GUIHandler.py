@@ -11,8 +11,9 @@ from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import Label
 from Tkinter import PhotoImage
-from tkMessageBox import showinfo
+from tkMessageBox import showinfo, showerror
 from Tkinter import Toplevel
+from ResolutionError import ResolutionError
 
 class GUIHandler:
 
@@ -29,16 +30,20 @@ class GUIHandler:
         self.root = Tk()
         self.root.title('SET')
         self.root.resizable(0,0)
+        self.root.withdraw()
+        GUIHandler.screenwidth = self.root.winfo_screenwidth()
+        GUIHandler.screenheight = self.root.winfo_screenheight()
+        if GUIHandler.screenwidth < 1024 or GUIHandler.screenheight < 768:
+            showerror("Resolution Error","Your screen's resolution is likely not the best choice to run this game. Minimum resolution for this game is at least 1024x768.")
+            raise ResolutionError(GUIHandler.screenwidth,GUIHandler.screenheight)
+        GUIHandler.windowwidth = GUIHandler.screenwidth // 3
+        GUIHandler.windowheight = GUIHandler.screenheight // 1.5
         self.buttonField = None
         self.checkButtonField = None
         self.Game = game
         self.Field = game.Field
         assert self.Game
         assert self.Field
-        GUIHandler.screenwidth = self.root.winfo_screenwidth()
-        GUIHandler.screenheight = self.root.winfo_screenheight()
-        GUIHandler.windowwidth = GUIHandler.screenwidth // 3
-        GUIHandler.windowheight = GUIHandler.screenheight // 1.5
 
 
         self.root.geometry('%dx%d+%d+%d' % (GUIHandler.windowwidth,
@@ -105,6 +110,7 @@ class GUIHandler:
         hintbutton.place(x=(GUIHandler.windowwidth-hintbutton.winfo_reqwidth())//2,y=3*GUIHandler.windowheight//3.5)
 
         self.userSetsCreated = Toplevel(self.root)
+        self.userSetsHeight = 0
         self.userSetsCreated.title("Sets Created")
         self.userSetsCreated.geometry("%dx%d+%d+%d" % (Card.pixelWidth*3,
                                                self.userSetsCreated.winfo_screenheight(),
@@ -132,6 +138,14 @@ class GUIHandler:
         if result == 2: #Case 1: 3 choices were made and the Game object verified them as a set.
             showinfo("Good Job!","You made a set!")
             self.remainderLabel.config(text="There are %d set(s) remaining on the board." % self.Game.numSetsRemaining())
+            x = 0
+            for h in map(Card.getCardImgNumber,[self.Field[i//self.Field.cols()][i%self.Field.cols()] for i in self.Game.setsMadeSoFar[-1]]):
+                pic = PhotoImage(file='../media/%d.gif'%h)
+                label = Label(self.userSetsCreated,image=pic)
+                label.image = pic
+                label.place(x=x,y=self.userSetsHeight)
+                x+=Card.pixelWidth
+            self.userSetsHeight+=Card.pixelHeight
             if not self.Game.numSetsRemaining():
                 showinfo("WINNER!","Congratulations! You found all sets!")
                 self.disableButtons()
@@ -152,8 +166,8 @@ class GUIHandler:
             for j in i:
                 j.config(state=Tkinter.DISABLED)
 
-    #Hard Coded lists of button widgets because python won't let me generate each of the Buttons' command
-    #feature correctly.
+    #Hard Coded lists of button widgets because python won't let me generate each of the Button's command
+    #feature correctly via list comprehension.
 
     def setupNoviceField(self):
 
@@ -169,16 +183,17 @@ class GUIHandler:
                              Button(self.root,command=lambda :self.processCardChoice(7)),
                              Button(self.root,command=lambda :self.processCardChoice(8))]]
 
-        self.checkButtonField = [[Checkbutton(self.root,command=lambda :self.processCardChoice(0)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(1)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(2))],
-                                 [Checkbutton(self.root,command=lambda :self.processCardChoice(3)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(4)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(5))],
-                                 [Checkbutton(self.root,command=lambda :self.processCardChoice(6)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(7)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(8))]]
+        self.checkButtonField = [[Checkbutton(self.root,text='1',command=lambda :self.processCardChoice(0)),
+                                  Checkbutton(self.root,text='2',command=lambda :self.processCardChoice(1)),
+                                  Checkbutton(self.root,text='3',command=lambda :self.processCardChoice(2))],
+                                 [Checkbutton(self.root,text='4',command=lambda :self.processCardChoice(3)),
+                                  Checkbutton(self.root,text='5',command=lambda :self.processCardChoice(4)),
+                                  Checkbutton(self.root,text='6',command=lambda :self.processCardChoice(5))],
+                                 [Checkbutton(self.root,text='7',command=lambda :self.processCardChoice(6)),
+                                  Checkbutton(self.root,text='8',command=lambda :self.processCardChoice(7)),
+                                  Checkbutton(self.root,text='9',command=lambda :self.processCardChoice(8))]]
 
+    #See the comment above setup Novice Field.
 
     def setupAdvancedField(self):
 
@@ -197,18 +212,18 @@ class GUIHandler:
                              Button(self.root,command=lambda :self.processCardChoice(10)),
                              Button(self.root,command=lambda :self.processCardChoice(11))]]
 
-        self.checkButtonField = [[Checkbutton(self.root,command=lambda :self.processCardChoice(0)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(1)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(2)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(3))],
-                                 [Checkbutton(self.root,command=lambda :self.processCardChoice(4)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(5)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(6)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(7))],
-                                 [Checkbutton(self.root,command=lambda :self.processCardChoice(8)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(9)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(10)),
-                                  Checkbutton(self.root,command=lambda :self.processCardChoice(11))]]
+        self.checkButtonField = [[Checkbutton(self.root,text='1',command=lambda :self.processCardChoice(0)),
+                                  Checkbutton(self.root,text='2',command=lambda :self.processCardChoice(1)),
+                                  Checkbutton(self.root,text='3',command=lambda :self.processCardChoice(2)),
+                                  Checkbutton(self.root,text='4',command=lambda :self.processCardChoice(3))],
+                                 [Checkbutton(self.root,text='5',command=lambda :self.processCardChoice(4)),
+                                  Checkbutton(self.root,text='6',command=lambda :self.processCardChoice(5)),
+                                  Checkbutton(self.root,text='7',command=lambda :self.processCardChoice(6)),
+                                  Checkbutton(self.root,text='8',command=lambda :self.processCardChoice(7))],
+                                 [Checkbutton(self.root,text='9',command=lambda :self.processCardChoice(8)),
+                                  Checkbutton(self.root,text='10',command=lambda :self.processCardChoice(9)),
+                                  Checkbutton(self.root,text='11',command=lambda :self.processCardChoice(10)),
+                                  Checkbutton(self.root,text='12',command=lambda :self.processCardChoice(11))]]
 
     def updateCardsOnField(self,cardField):
 
@@ -241,10 +256,12 @@ class GUIHandler:
 
     def startNewGame(self):
 
+        self.userSetsHeight = 0
+        [i.destroy() for i in self.userSetsCreated.children.values()]
         self.Game.resetGame()
         self.updateCardsOnField(self.Game.Field)
         self.remainderLabel.config(text="There are %d set(s) remaining on the board." % self.Game.numSetsTotal)
-        ##print self.Game.setsListTotal
+        print map(lambda ls:map(lambda x:x+1,ls),self.Game.setsListTotal)
         
     def _destroyAllButtons(self):
 
@@ -261,7 +278,7 @@ class GUIHandler:
             self.startNewGame()
 
     def run(self):
-
+        self.root.deiconify()
         self.root.mainloop()
 
 if __name__ == "__main__":

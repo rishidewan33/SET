@@ -92,13 +92,13 @@ class Game(object):
         assert len(self.cardChoices) == 0
 
         if len(self.NormalDeck) < 81: #Case 1: The cards in the field instance were from the normal deck and are being returned to the deck.
-            while len(self.Field) != 0:
+            while len(self.Field):
                 for i in self.Field.pop():
                     self.NormalDeck.append(i)
             assert len(self.NormalDeck) == 81
             random.shuffle(self.NormalDeck)
         elif len(self.BeginnersDeck) < 27: #Case 2: The cards in the field instance were from the beginner's deck and are being returned to the deck.
-            while len(self.Field) != 0:
+            while len(self.Field):
                 for i in self.Field.pop():
                     self.BeginnersDeck.append(i)
             assert len(self.BeginnersDeck) == 27
@@ -131,7 +131,7 @@ class Game(object):
             c1 = self.Field[i//cols][i%cols]
             c2 = self.Field[j//cols][j%cols]
             c3 = self.Field[k//cols][k%cols]
-            if self.verifySet([c1, c2, c3]) == None:
+            if not self.verifySet([c1, c2, c3]):
                 self.setsListTotal.append([i, j, k])
         self.numSetsTotal = len(self.setsListTotal)
         return self.numSetsTotal
@@ -146,14 +146,13 @@ class Game(object):
         assert type(ls[1]) == Card
         assert type(ls[2]) == Card
         
-        violators = None
         d1 = ls[0].__dict__
         d2 = ls[1].__dict__
         d3 = ls[2].__dict__
         for attr in Card.attrdict:
             i,j,k = d1[attr],d2[attr],d3[attr]
             violators = self._verifyHelper([i, j, k])
-            if(violators != None):
+            if violators:
                 assert len(violators) == 2
                 return Card.attrdict[attr][violators[0]], Card.attrdict[attr][violators[1]]
                 #if the cards picked aren't a set then we return from the function.
@@ -165,13 +164,13 @@ class Game(object):
 
         assert len(attributes) == 3
         if attributes[0] == attributes[1] and attributes[0] != attributes[2]:
-            return (attributes[0], attributes[2])
+            return attributes[0], attributes[2]
 
         if attributes[1] == attributes[2] and attributes[1] != attributes[0]:
-            return (attributes[1], attributes[0])
+            return attributes[1], attributes[0]
 
         if attributes[0] == attributes[2] and attributes[0] != attributes[1]:
-            return (attributes[0], attributes[1])
+            return attributes[0], attributes[1]
 
     ## Primary method used for testing the validity of the current card choices.
     #  It returns one of the following: A tuple of strings indicating the attributes
@@ -216,7 +215,7 @@ class Game(object):
     ##Sets the game difficulty of the current game.
     # Returns True if the difficulty change was successful, False if it wasn't.
     def changeGameDifficulty(self,i,f):
-        if (self.gamediff == i and self.beginnerFlag == f):
+        if self.gamediff == i and self.beginnerFlag == f:
             return False
         assert i == 0 or i == 1
 
