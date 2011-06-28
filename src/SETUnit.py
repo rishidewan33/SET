@@ -6,31 +6,54 @@ from Card import Card
 
 class  SETUnitTestCase(unittest.TestCase):
 
-    testgame = Game()
-    testcard = Card(0,0,0,0)
+    def setUp(self):
+        self.testgame = Game()
+        self.testcard = Card(0,0,0,0)
 
     def testCardImageNumber0(self):
-        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),0)
+        self.assertEqual(self.testcard.getCardImgNumber(),0)
 
     def testCardImageNumber1(self):
-        SETUnitTestCase.testcard.shading = 1
-        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),27)
+        self.testcard.shading = 1
+        self.assertEqual(self.testcard.getCardImgNumber(),27)
 
     def testCardImageNumber2(self):
-        SETUnitTestCase.testcard.number = 2
-        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),29)
+        self.testcard.shading = 1
+        self.testcard.number = 2
+        self.assertEqual(self.testcard.getCardImgNumber(),29)
 
     def testCardImageNumber3(self):
-        SETUnitTestCase.testcard.number = 3
-        self.assertEqual(SETUnitTestCase.testcard.number,2)
-        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),29)
+        self.testcard.shading = 1
+        self.testcard.shape = 2
+        self.testcard.number = 3
+        self.assertEqual(self.testcard.number,0)
+        self.assertEqual(self.testcard.getCardImgNumber(),45)
 
-    def testGameInstance(self):
-        self.assertEqual(SETUnitTestCase.testgame.numSetsTotal,4)
-        SETUnitTestCase.testgame.changeGameDifficulty(0,True)
-        self.assertEqual(len(SETUnitTestCase.testgame.UseDeck),27)
-        SETUnitTestCase.testgame.changeGameDifficulty(1,True)
-        self.assertEqual(SETUnitTestCase.testgame.beginnerFlag,False)
+    def testChangeToNovice(self):
+        self.assertEqual(self.testgame.numSetsTotal,4)
+
+        self.testgame.changeGameDifficulty(0,False)
+        self.testgame.resetGame()
+        self.assertEqual(len(self.testgame.NormalDeck),72)
+        self.assertEqual(len(self.testgame.BeginnersDeck),27)
+
+    def testChangeToBeginner(self):
+        self.testgame.changeGameDifficulty(0,True)
+        self.testgame.resetGame()
+        self.assertEqual(len(self.testgame.NormalDeck),81)
+        self.assertEqual(len(self.testgame.BeginnersDeck),18)
+
+    def testNoChangeToBeginnerAdvanced(self):
+        self.testgame.changeGameDifficulty(1,True)
+        self.testgame.resetGame()
+        self.assertEqual(len(self.testgame.NormalDeck),72)
+        self.assertEqual(len(self.testgame.BeginnersDeck),27)
+
+    def testChangeToAdvanced(self):
+        self.testgame.changeGameDifficulty(1,False)
+        self.testgame.resetGame()
+        self.assertEqual(len(self.testgame.NormalDeck),69)
+        self.assertEqual(len(self.testgame.BeginnersDeck),27)
 
 if __name__ == '__main__':
     unittest.main()

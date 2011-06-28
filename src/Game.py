@@ -215,12 +215,14 @@ class Game(object):
     ##Sets the game difficulty of the current game.
     # Returns True if the difficulty change was successful, False if it wasn't.
     def changeGameDifficulty(self,i,f):
+        if i and f:
+            return False
         if self.gamediff == i and self.beginnerFlag == f:
             return False
         assert i == 0 or i == 1
 
         self.gamediff = i
-        self.beginnerFlag = f and not self.gamediff #Assures that the difficulty cannot be Advanced, with the beginner flag true.
+        self.beginnerFlag = f
         self.UseDeck = self.BeginnersDeck if f else self.NormalDeck
         return True
 
