@@ -12,7 +12,6 @@ from Tkinter import Checkbutton
 from Tkinter import Label
 from Tkinter import PhotoImage
 from Tkinter import Toplevel
-from Tkinter import Entry
 
 from tkMessageBox import showinfo, showerror
 
@@ -279,13 +278,12 @@ class GUIHandler:
 
     def getHint(self):
         result = self.Game.callHint()
-        if result == -1:
-            showinfo("No more hints","Sorry. You are out of hints to use.")
-        elif result == -2:
+        if result == -2:
             showinfo("Game's over","Game has ended. Start a new game if you wish.")
+        elif result == -1:
+            showinfo("No more hints","Sorry. You are out of hints to spare.")
         else:
-            cols = len(self.buttonField[0])
-            self.buttonField[result//cols][result%cols].invoke()
+            showinfo("Your Hint","Pick Card #%d"%(result+1))
 
     def run(self):
         self.root.deiconify()
