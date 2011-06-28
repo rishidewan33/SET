@@ -97,9 +97,6 @@ class GUIHandler:
         self.root.bind('n',lambda e:gamedifficulty.invoke(1))
         self.root.bind('a',lambda e:gamedifficulty.invoke(2))
 
-
-
-
         self.remainderLabel = Label(self.root,text="There are %d set(s) remaining on the board." % self.Game.numSetsTotal,bg="white",relief=Tkinter.RAISED,font=('Helvetica',12))
         self.remainderLabel.place(x=(GUIHandler.windowwidth-self.remainderLabel.winfo_reqwidth())//2,y=3*GUIHandler.windowheight//4)
 

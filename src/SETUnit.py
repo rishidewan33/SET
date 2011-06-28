@@ -2,40 +2,35 @@ import unittest
 
 from Game import Game
 from Card import Card
-from GUIHandler import GUIHandler
+#from GUIHandler import GUIHandler
 
 class  SETUnitTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.testgame = Game()
-        #self.testguihandler = GUIHandler(self.testgame)
-        self.testcard = Card(0,0,0,0)
+    testgame = Game()
+    testcard = Card(0,0,0,0)
 
     def testCardImageNumber0(self):
-        self.assertEqual(self.testcard.getCardImgNumber(),0)
+        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),0)
 
     def testCardImageNumber1(self):
-        self.testcard.shading = 1
-        self.assertEqual(self.testcard.getCardImgNumber(),27)
+        SETUnitTestCase.testcard.shading = 1
+        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),27)
 
     def testCardImageNumber2(self):
-        self.testcard.number = 2
-        self.assertEqual(self.testcard.getCardImgNumber(),29)
+        SETUnitTestCase.testcard.number = 2
+        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),29)
 
     def testCardImageNumber3(self):
-        self.testcard.number = 3
-        self.assertEqual(self.testcard.number,2)
-        self.assertEqual(self.testcard.getCardImgNumber(),29)
+        SETUnitTestCase.testcard.number = 3
+        self.assertEqual(SETUnitTestCase.testcard.number,2)
+        self.assertEqual(SETUnitTestCase.testcard.getCardImgNumber(),29)
 
     def testGameInstance(self):
-        self.assertEqual(self.testgame.numSetsTotal,4)
-        self.assertEqual(self.testgame.numSetsTotal,4)
-        self.assertEqual(self.testgame.numSetsTotal,4)
-        self.testgame.changeGameDifficulty(0,True)
-        self.assertEqual(len(self.testgame.UseDeck),27)
-        self.testgame.changeGameDifficulty(1,True)
-        self.assertEqual(self.testgame.beginnerFlag,False)
-
+        self.assertEqual(SETUnitTestCase.testgame.numSetsTotal,4)
+        SETUnitTestCase.testgame.changeGameDifficulty(0,True)
+        self.assertEqual(len(SETUnitTestCase.testgame.UseDeck),27)
+        SETUnitTestCase.testgame.changeGameDifficulty(1,True)
+        self.assertEqual(SETUnitTestCase.testgame.beginnerFlag,False)
 
 if __name__ == '__main__':
     unittest.main()
