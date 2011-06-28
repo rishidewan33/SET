@@ -11,8 +11,11 @@ from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import Label
 from Tkinter import PhotoImage
-from tkMessageBox import showinfo, showerror
 from Tkinter import Toplevel
+from Tkinter import Entry
+
+from tkMessageBox import showinfo, showerror
+
 from ResolutionError import ResolutionError
 
 class GUIHandler:
@@ -103,7 +106,7 @@ class GUIHandler:
         timer = Label(self.root,text="Untimed Mode",bg="green",relief=Tkinter.RAISED,font=('Helvetica',12))
         timer.place(x=(GUIHandler.windowwidth-timer.winfo_reqwidth())//2,y=3*GUIHandler.windowheight//4.5)
 
-        hintbutton = Button(text="Hint, please!",font=("Helvetica",12),command=lambda :showinfo("Not implemented","Feature not implemented...yet."))
+        hintbutton = Button(text="Hint, please!",font=("Helvetica",12),command=lambda :self.getHint())
         hintbutton.place(x=(GUIHandler.windowwidth-hintbutton.winfo_reqwidth())//2,y=3*GUIHandler.windowheight//3.5)
 
         self.userSetsCreated = Toplevel(self.root)
@@ -273,6 +276,16 @@ class GUIHandler:
 
         if self.Game.changeGameDifficulty(i,f):
             self.startNewGame()
+
+    def getHint(self):
+        result = self.Game.callHint()
+        if result == -1:
+            showinfo("No more hints","Sorry. You are out of hints to use.")
+        elif result == -2:
+            showinfo("Game's over","Game has ended. Start a new game if you wish.")
+        else:
+            cols = len(self.buttonField[0])
+            self.buttonField[result//cols][result%cols].invoke()
 
     def run(self):
         self.root.deiconify()

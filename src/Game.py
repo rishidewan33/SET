@@ -33,7 +33,9 @@ class Game(object):
     ## @var UseDeck
     # References one of the 2 decks above based on the mode the user chooses to play in.
     ## @var beginnerFlag
-    # Flag that determines whether the game should be in beginner mode. gamediff cannot be 1 or 2 if beginnerFlag is True.
+    # Boolean that determines whether the game should be in beginner mode. gamediff cannot be 1 or 2 if beginnerFlag is True.
+    ## @var timerModeFlag
+    # Boolean that determines whether the game should be run in timed mode.
     ## @var gamediff
     # Difficulty of the Game itself (a.k.a. the number of cards), Beginner/Novice uses 9 cards on the field, Advanced uses 12.
     # Default difficulty is Novice. (0 = Beginner and beginnerFlag = True, 0 = Novice and beginnerFlag = False, 2 = Advanced)
@@ -41,6 +43,8 @@ class Game(object):
     # Determines the difficulty of timed mode.
     # Easy by default when timed mode is turned on (0 = Easy, 1 = Medium, 2 = Hard).
     # Higher difficulties means less time to find sets. Game is in untimed mode by default
+    ## @var numHints
+    # Number of hints alloted to the user whenever a new game is started.
     ## @var Field
     # An instance of a Field object that the Game object uses to scan for sets,
     # reference field indices for card choices, etc.
@@ -59,7 +63,7 @@ class Game(object):
         self.timedModeFlag = False
         self.gamediff = 0
         self.timeddiff = 0
-        self.numHints = 0
+        self.numHints = 2
         self.Field = Field(3,3+self.gamediff)
 
         iter = itertools.product(xrange(3), repeat=4) #Generates the novice/advanced level's deck.
@@ -79,10 +83,13 @@ class Game(object):
 
     ## resets all data for the Game, this method was created because it was
     #  preferable than having overhead with creating a brand new instance and garbage collection
+    #  If the number of sets found during the scan doesn't satisfy require 
+    # @param self The object pointer
     def resetGame(self):
 
         self.numSetsMade = 0
         self.numSetsTotal = 0
+        self.numHints = 2
         del self.setsListTotal[:]
         del self.setsMadeSoFar[:]
         del self.cardChoices[:]
@@ -112,7 +119,7 @@ class Game(object):
             self.resetGame()
         
     ##Take cards from the top of the deck and place them in the (backend) field.
-    #
+    # @param self The object pointer
     def placeCardsOnField(self):
 
         for i in range(len(self.Field.cardField)):
@@ -120,7 +127,8 @@ class Game(object):
                 self.Field.cardField[i][j] = self.UseDeck.pop()
 
     ##Checks over the (backend) Field array to check all possible sets
-    #
+    # @param self The object pointer
+    # @return The number of sets found during the scan.
     def scanSetsOnField(self):
 
         rows = len(self.Field)
@@ -138,7 +146,10 @@ class Game(object):
 
     ##Given a list of EXACTLY 3 Card Objects, this method checks the attributes of the cards to
     # see if the cards form a given set. If so, return 'None', if not return the 2 attributes that violate the SET rule.
-
+    # @param self The object pointer
+    # @param ls The list of Card Objects (of length 3) whose attributes may or may not form a set.
+    # @return None if the cards in the list form a set.
+    # @return a 2-length tuple of string attributes that violate the set rule.
     def verifySet(self,ls):
 
         assert len(ls) == 3
@@ -159,6 +170,7 @@ class Game(object):
                 #We return the string attributes that violate the SET rule.
 
     ## A simple helper method for the verifySet function that actually checks the attributes
+    #  @param A 3-length list of set attributes to determine if they violate the set rule of not
     #  @return A 2-length tuple of string attributes that violated the set rule, or None otherwise.
     def _verifyHelper(self,attributes):
 
@@ -195,7 +207,11 @@ class Game(object):
     #  this function. If the choices passed in the function already exists in the choice list, it is removed.
     #  If the choices list hasn't reached 3 yet, returns 0. Otherwise, we call the validateSet() method and return
     #  the method's return value.
-    #  @return (0 == Pending (choice list hasn't reached length 3 yet), and the return values from validateSet() are also used, 3 == choices to be removed from set.)
+    #  @param self The object pointer
+    #  @param i the card id on the field to be added to the card choices.
+    #  @return 0 if the choice list hasn't reached length 3 yet
+    #  @return 3 if a choice is to be removed from set.)
+    #  @return a result from self.validateSet()
     def addCardChoice(self,i):
 
         assert len(self.cardChoices) < 3
@@ -225,6 +241,21 @@ class Game(object):
         self.beginnerFlag = f
         self.UseDeck = self.BeginnersDeck if f else self.NormalDeck
         return True
+
+    ##Helper method which calculates the numbers of sets remaining to find.
+    # @param self The Object Pointer
+    # @return The number of sets remaining on the field.
+
+    def callHint(self):
+        if not self.numHints:
+            return -1
+        self.numHints-=1
+        result = set(map(tuple,self.setsListTotal)).difference(set(map(tuple,self.setsMadeSoFar)))
+        if not len(result):
+            return -2
+        return result.pop()[0]
+        #Complex function to choose a card on the field that's in a set that hasn't been made yet.
+        #A shame that sets aren't indexable...or that you can't have a set of lists...
 
     def numSetsRemaining(self):
 
