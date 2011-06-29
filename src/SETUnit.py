@@ -36,24 +36,28 @@ class  SETUnitTestCase(unittest.TestCase):
         self.testgame.resetGame()
         self.assertEqual(len(self.testgame.NormalDeck),72)
         self.assertEqual(len(self.testgame.BeginnersDeck),27)
+        self.assertEqual(self.testgame.numSetsTotal,4)
 
     def testChangeToBeginner(self):
         self.testgame.changeGameDifficulty(0,True)
         self.testgame.resetGame()
         self.assertEqual(len(self.testgame.NormalDeck),81)
         self.assertEqual(len(self.testgame.BeginnersDeck),18)
+        self.assertEqual(self.testgame.numSetsTotal,4)
 
     def testNoChangeToBeginnerAdvanced(self):
         self.testgame.changeGameDifficulty(1,True)
         self.testgame.resetGame()
         self.assertEqual(len(self.testgame.NormalDeck),72)
         self.assertEqual(len(self.testgame.BeginnersDeck),27)
+        self.assertEqual(self.testgame.numSetsTotal,4)
 
     def testChangeToAdvanced(self):
         self.testgame.changeGameDifficulty(1,False)
         self.testgame.resetGame()
         self.assertEqual(len(self.testgame.NormalDeck),69)
         self.assertEqual(len(self.testgame.BeginnersDeck),27)
+        self.assertEqual(self.testgame.numSetsTotal,6)
 
 if __name__ == '__main__':
     unittest.main()

@@ -24,7 +24,7 @@ class Game(object):
     # The absolute total number of sets that are on the field to be found.
     ## @var cardChoices
     # A list that keeps track of the current set choices the users has made.
-    # Once the user has made 3 card choices (i.e. len(cardChoices) == 3), the Game Object verifies the Set.
+    # Once the user has made 3 card choices (i.e. len(_cardChoices) == 3), the Game Object verifies the Set.
     ## @var BeginnersDeck
     # A Deck object which contains cards of only solid shadings (27 cards in this deck). This deck is used only in the Beginner Level
     ## @var NormalDeck
@@ -33,12 +33,12 @@ class Game(object):
     ## @var UseDeck
     # References one of the 2 decks above based on the mode the user chooses to play in.
     ## @var beginnerFlag
-    # Boolean that determines whether the game should be in beginner mode. gamediff cannot be 1 or 2 if beginnerFlag is True.
+    # Boolean that determines whether the game should be in beginner mode. _gamediff cannot be 1 or 2 if _beginnerFlag is True.
     ## @var timerModeFlag
     # Boolean that determines whether the game should be run in timed mode.
     ## @var gamediff
     # Difficulty of the Game itself (a.k.a. the number of cards), Beginner/Novice uses 9 cards on the field, Advanced uses 12.
-    # Default difficulty is Novice. (0 = Beginner and beginnerFlag = True, 0 = Novice and beginnerFlag = False, 2 = Advanced)
+    # Default difficulty is Novice. (0 = Beginner and _beginnerFlag = True, 0 = Novice and _beginnerFlag = False, 2 = Advanced)
     ## @var timediff
     # Determines the difficulty of timed mode.
     # Easy by default when timed mode is turned on (0 = Easy, 1 = Medium, 2 = Hard).
@@ -46,9 +46,9 @@ class Game(object):
     ## @var numHints
     # Number of hints alloted to the user whenever a new game is started.
     ## @var Field
-    # An instance of a Field object that the Game object uses to scan for sets,
+    # An instance of a _Field object that the Game object uses to scan for sets,
     # reference field indices for card choices, etc.
-    
+
     def __init__(self):
 
         self.numSetsMade = 0
@@ -63,9 +63,8 @@ class Game(object):
         self.timedModeFlag = False
         self.gamediff = 0
         self.timeddiff = 0
-        self.numHints = 2
+        self.numHints = 0
         self.Field = Field(3,3+self.gamediff)
-
         iter = itertools.product(xrange(3), repeat=4) #Generates the novice/advanced level's deck.
         for i in iter:
             self.NormalDeck.append(Card(i[0],i[1],i[2],i[3]))
@@ -126,7 +125,7 @@ class Game(object):
             for j in range(len(self.Field.cardField[0])):
                 self.Field.cardField[i][j] = self.UseDeck.pop()
 
-    ##Checks over the (backend) Field array to check all possible sets
+    ##Checks over the (backend) _Field array to check all possible sets
     # @param self The object pointer
     # @return The number of sets found during the scan.
     def scanSetsOnField(self):
@@ -203,7 +202,7 @@ class Game(object):
         else:
             return result
 
-    ## Primary method for processing cardChoices. The length of the choice list must be less than 3 upon calling
+    ## Primary method for processing _cardChoices. The length of the choice list must be less than 3 upon calling
     #  this function. If the choices passed in the function already exists in the choice list, it is removed.
     #  If the choices list hasn't reached 3 yet, returns 0. Otherwise, we call the validateSet() method and return
     #  the method's return value.
@@ -244,16 +243,19 @@ class Game(object):
 
     ##Helper method which calculates the numbers of sets remaining to find.
     # @param self The Object Pointer
-    # @return The number of sets remaining on the field.
+    # @return The number of sets remaining on the field, or a negative number representing an error number.
 
     def callHint(self):
+        if not self.numSetsRemaining():
+            return -2
         if not self.numHints:
             return -1
+        result = set(map(tuple,self.setsListTotal)) - set(map(tuple,self.setsMadeSoFar))
+        if len(result) == 1:
+            return -3
+        result2 = set(result.pop()) - set(self.cardChoices)
         self.numHints-=1
-        result = set(map(tuple,self.setsListTotal)).difference(set(map(tuple,self.setsMadeSoFar)))
-        if not len(result):
-            return -2
-        return result.pop()[0]
+        return result2.pop()
         #Complex function to choose a card on the field that's in a set that hasn't been made yet.
         #A shame that sets aren't indexable...or that you can't have a set of lists...
 

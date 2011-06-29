@@ -47,7 +47,6 @@ class GUIHandler:
         assert self.Game
         assert self.Field
 
-
         self.root.geometry('%dx%d+%d+%d' % (GUIHandler.windowwidth,
                                           GUIHandler.windowheight,
                                           self.root.winfo_screenwidth()/8,
@@ -99,7 +98,7 @@ class GUIHandler:
         self.root.bind('n',lambda e:gamedifficulty.invoke(1))
         self.root.bind('a',lambda e:gamedifficulty.invoke(2))
 
-        self.remainderLabel = Label(self.root,text="There are %d set(s) remaining on the board." % self.Game.numSetsTotal,bg="white",relief=Tkinter.RAISED,font=('Helvetica',12))
+        self.remainderLabel = Label(self.root,text="There are %d set(s) remaining on the board." % self.Game.numSetsRemaining(),bg="white",relief=Tkinter.RAISED,font=('Helvetica',12))
         self.remainderLabel.place(x=(GUIHandler.windowwidth-self.remainderLabel.winfo_reqwidth())//2,y=3*GUIHandler.windowheight//4)
 
         timer = Label(self.root,text="Untimed Mode",bg="green",relief=Tkinter.RAISED,font=('Helvetica',12))
@@ -192,7 +191,7 @@ class GUIHandler:
                                   Checkbutton(self.root,text='8',command=lambda :self.processCardChoice(7)),
                                   Checkbutton(self.root,text='9',command=lambda :self.processCardChoice(8))]]
 
-    #See the comment above setup Novice Field.
+    #See the comment above setup Novice _Field.
 
     def setupAdvancedField(self):
 
@@ -261,7 +260,7 @@ class GUIHandler:
         self.updateCardsOnField(self.Game.Field)
         self.remainderLabel.config(text="There are %d set(s) remaining on the board." % self.Game.numSetsTotal)
         #print map(lambda ls:map(lambda x:x+1,ls),self.Game.setsListTotal)
-        
+
     def _destroyAllButtons(self):
 
         for i in self.buttonField:
@@ -278,7 +277,9 @@ class GUIHandler:
 
     def getHint(self):
         result = self.Game.callHint()
-        if result == -2:
+        if result == -3:
+            showinfo("One set remains","You cannot use hints in finding the last set.")
+        elif result == -2:
             showinfo("Game's over","Game has ended. Start a new game if you wish.")
         elif result == -1:
             showinfo("No more hints","Sorry. You are out of hints to spare.")
