@@ -3,6 +3,7 @@ __date__ ="$Jun 7, 2011 11:15:55 PM$"
 
 from Field import Field
 from Card import Card
+from Difficulty import Difficulty
 
 import itertools
 import random
@@ -32,8 +33,6 @@ class Game(object):
     # This deck is used by default.
     ## @var UseDeck
     # References one of the 2 decks above based on the mode the user chooses to play in.
-    ## @var beginnerFlag
-    # Boolean that determines whether the game should be in beginner mode. _gamediff cannot be 1 or 2 if _beginnerFlag is True.
     ## @var timerModeFlag
     # Boolean that determines whether the game should be run in timed mode.
     ## @var gamediff
@@ -44,7 +43,7 @@ class Game(object):
     # Easy by default when timed mode is turned on (0 = Easy, 1 = Medium, 2 = Hard).
     # Higher difficulties means less time to find sets. Game is in untimed mode by default
     ## @var numHints
-    # Number of hints alloted to the user whenever a new game is started.
+    # Number of hints allotted to the user whenever a new game is started.
     ## @var Field
     # An instance of a _Field object that the Game object uses to scan for sets,
     # reference field indices for card choices, etc.
@@ -59,12 +58,12 @@ class Game(object):
         self.BeginnersDeck = []
         self.NormalDeck = []
         self.UseDeck = self.NormalDeck
-        self.beginnerFlag = False
         self.timedModeFlag = False
-        self.gamediff = 0
+        self.gamediff = Difficulty.NOVICE
         self.timeddiff = 0
         self.numHints = 0
-        self.Field = Field(3,3+self.gamediff)
+        self.Field = Field(3,4) if self.gamediff == Difficulty.ADVANCED else Field(3,3)
+
         iter = itertools.product(xrange(3), repeat=4) #Generates the novice/advanced level's deck.
         for i in iter:
             self.NormalDeck.append(Card(i[0],i[1],i[2],i[3]))
@@ -76,7 +75,7 @@ class Game(object):
         random.shuffle(self.BeginnersDeck)
 
         self.placeCardsOnField()
-        if self.scanSetsOnField() != 4 + (2 * self.gamediff):
+        if self.scanSetsOnField() != 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
             self.resetGame()
         self.numHints = int(not self.timedModeFlag) * (self.numSetsTotal//2) + int(self.timedModeFlag) * (self.numSetsTotal//2)
 
@@ -112,9 +111,9 @@ class Game(object):
         else: #Default case: There shouldn't be default case...
             assert False #Program should definitely not reach this statement
             
-        self.Field.reset(3,3+self.gamediff) #reset the existing field instance rather than create a new instance (a new instance doesn't work for some reason)
+        self.Field.reset(3,3+(1 if self.gamediff == Difficulty.ADVANCED else 0)) #reset the existing field instance rather than create a new instance (a new instance doesn't work for some reason)
         self.placeCardsOnField()
-        if self.scanSetsOnField() != 4 + (2*self.gamediff):
+        if self.scanSetsOnField() != 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
             self.resetGame()
         
     ##Take cards from the top of the deck and place them in the (backend) field.
@@ -229,16 +228,11 @@ class Game(object):
 
     ##Sets the game difficulty of the current game.
     # Returns True if the difficulty change was successful, False if it wasn't.
-    def changeGameDifficulty(self,i,f):
-        if i and f:
+    def changeGameDifficulty(self,difficulty):
+        if self.gamediff == difficulty:
             return False
-        if self.gamediff == i and self.beginnerFlag == f:
-            return False
-        assert i == 0 or i == 1
-
-        self.gamediff = i
-        self.beginnerFlag = f
-        self.UseDeck = self.BeginnersDeck if f else self.NormalDeck
+        self.gamediff = difficulty
+        self.UseDeck = self.BeginnersDeck if self.gamediff == Difficulty.BEGINNER else self.NormalDeck
         return True
 
     ##Helper method which calculates the numbers of sets remaining to find.

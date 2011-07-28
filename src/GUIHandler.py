@@ -4,6 +4,7 @@ __date__ ="$Jun 6, 2010 4:09:32 PM$"
 
 from Card import Card
 from Game import Game
+from Difficulty import Difficulty
 import Tkinter
 from Tkinter import Tk
 from Tkinter import Menu
@@ -64,9 +65,9 @@ class GUIHandler:
         settingmenu = Menu(menu,tearoff=0)
 
         gamedifficulty = Menu(settingmenu,tearoff=0)
-        gamedifficulty.add_radiobutton(label='Beginner',command=lambda :self.changeGameDifficulty(0,True),accelerator="B")
-        gamedifficulty.add_radiobutton(label='Novice',command=lambda :self.changeGameDifficulty(0,False),accelerator="N")
-        gamedifficulty.add_radiobutton(label='Advanced',command=lambda :self.changeGameDifficulty(1,False),accelerator="A")
+        gamedifficulty.add_radiobutton(label='Beginner',command=lambda :self.changeGameDifficulty(Difficulty.BEGINNER),accelerator="B")
+        gamedifficulty.add_radiobutton(label='Novice',command=lambda :self.changeGameDifficulty(Difficulty.NOVICE),accelerator="N")
+        gamedifficulty.add_radiobutton(label='Advanced',command=lambda :self.changeGameDifficulty(Difficulty.ADVANCED),accelerator="A")
 
         settingmenu.add_cascade(label='Game Difficulty',menu=gamedifficulty)
 
@@ -94,9 +95,9 @@ class GUIHandler:
         self.root.bind('<F2>',lambda e:gamemenu.invoke(0))
         self.root.bind('L',lambda e:gamemenu.invoke(1))
         self.root.bind('<Alt-F4>',lambda e:gamemenu.invoke(2))
-        self.root.bind('b',lambda e:gamedifficulty.invoke(0))
-        self.root.bind('n',lambda e:gamedifficulty.invoke(1))
-        self.root.bind('a',lambda e:gamedifficulty.invoke(2))
+        self.root.bind('b',lambda e:gamedifficulty.invoke(Difficulty.BEGINNER))
+        self.root.bind('n',lambda e:gamedifficulty.invoke(Difficulty.NOVICE))
+        self.root.bind('a',lambda e:gamedifficulty.invoke(Difficulty.ADVANCED))
 
         self.remainderLabel = Label(self.root,text="There are %d set(s) remaining on the board." % self.Game.numSetsRemaining(),bg="white",relief=Tkinter.RAISED,font=('Helvetica',12))
         self.remainderLabel.place(x=(GUIHandler.windowwidth-self.remainderLabel.winfo_reqwidth())//2,y=3*GUIHandler.windowheight//4)
@@ -270,9 +271,9 @@ class GUIHandler:
             for j in i:
                 j.destroy()
 
-    def changeGameDifficulty(self,i,f):
+    def changeGameDifficulty(self,difficulty):
 
-        if self.Game.changeGameDifficulty(i,f):
+        if self.Game.changeGameDifficulty(difficulty):
             self.startNewGame()
 
     def getHint(self):

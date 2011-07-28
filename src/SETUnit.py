@@ -3,6 +3,7 @@ import unittest
 from Game import Game
 from Card import Card
 #from GUIHandler import GUIHandler
+from Difficulty import Difficulty
 
 class  SETUnitTestCase(unittest.TestCase):
 
@@ -32,31 +33,32 @@ class  SETUnitTestCase(unittest.TestCase):
     def testChangeToNovice(self):
         self.assertEqual(self.testgame.numSetsTotal,4)
 
-        self.testgame.changeGameDifficulty(0,False)
+        self.testgame.changeGameDifficulty(Difficulty.NOVICE)
         self.testgame.resetGame()
         self.assertEqual(len(self.testgame.NormalDeck),72)
         self.assertEqual(len(self.testgame.BeginnersDeck),27)
         self.assertEqual(self.testgame.numSetsTotal,4)
 
     def testChangeToBeginner(self):
-        self.testgame.changeGameDifficulty(0,True)
+        self.testgame.changeGameDifficulty(Difficulty.BEGINNER)
         self.testgame.resetGame()
         self.assertEqual(len(self.testgame.NormalDeck),81)
         self.assertEqual(len(self.testgame.BeginnersDeck),18)
         self.assertEqual(self.testgame.numSetsTotal,4)
 
-    def testNoChangeToBeginnerAdvanced(self):
-        self.testgame.changeGameDifficulty(1,True)
-        self.testgame.resetGame()
-        self.assertEqual(len(self.testgame.NormalDeck),72)
-        self.assertEqual(len(self.testgame.BeginnersDeck),27)
-        self.assertEqual(self.testgame.numSetsTotal,4)
-
     def testChangeToAdvanced(self):
-        self.testgame.changeGameDifficulty(1,False)
+        self.testgame.changeGameDifficulty(Difficulty.ADVANCED)
         self.testgame.resetGame()
         self.assertEqual(len(self.testgame.NormalDeck),69)
         self.assertEqual(len(self.testgame.BeginnersDeck),27)
+        self.assertEqual(self.testgame.numSetsTotal,6)
+
+    def testNumberOfSetsGenerated1(self):
+        self.assertEqual(self.testgame.numSetsTotal,4)
+
+    def testNumberOfSetsGenerated2(self):
+        self.testgame.changeGameDifficulty(Difficulty.ADVANCED)
+        self.testgame.resetGame()
         self.assertEqual(self.testgame.numSetsTotal,6)
 
 if __name__ == '__main__':
