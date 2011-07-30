@@ -11,7 +11,7 @@ class Card(object):
                 'shape':['squiggle','diamond','oval'],
                 'number':['one','two','three'] }
 
-    def __init__(self, col, shap, num, shad):
+    def __init__(self,shad,shap,col,num):
 
         ##
         #Initializes the Card object (All field will have the value 0, 1, or 2)
@@ -20,10 +20,10 @@ class Card(object):
         #@param col = color of the shapes (0=Red,1=Purple,2=Green)
         #@param num = number of shapes on the card (0=1,1=2,2=3)
 
-        self.color = col
-        self.shape = shap
-        self.number = num
         self.shading = shad
+        self.shape = shap
+        self.color = col
+        self.number = num
 
     def getCardImgNumber(self):
 

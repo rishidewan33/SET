@@ -26,13 +26,8 @@ class Game(object):
     ## @var cardChoices
     # A list that keeps track of the current set choices the users has made.
     # Once the user has made 3 card choices (i.e. len(_cardChoices) == 3), the Game Object verifies the Set.
-    ## @var BeginnersDeck
-    # A Deck object which contains cards of only solid shadings (27 cards in this deck). This deck is used only in the Beginner Level
-    ## @var NormalDeck
-    # A Deck object which contains all possible features (81 cards in this deck). This deck is used only in the Novice and Advanced Level.
-    # This deck is used by default.
-    ## @var UseDeck
-    # References one of the 2 decks above based on the mode the user chooses to play in.
+    ## @var deckManager
+    # Object which manages the use of the Beginner sized deck and the Normal size deck in gameplay.
     ## @var timerModeFlag
     # Boolean that determines whether the game should be run in timed mode.
     ## @var gamediff
@@ -59,13 +54,12 @@ class Game(object):
         self.timedModeFlag = False
         self.gamediff = Difficulty.NOVICE
         self.timeddiff = 0
-        self.numHints = 0
+        self.numHints = 3 if self.gamediff == Difficulty.ADVANCED else 2
         self.Field = Field(3,4) if self.gamediff == Difficulty.ADVANCED else Field(3,3)
 
         self.deckManager.placeCardsOnField(self.Field)
         if self.scanSetsOnField() != 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
             self.resetGame()
-        self.numHints = int(not self.timedModeFlag) * (self.numSetsTotal//2) + int(self.timedModeFlag) * (self.numSetsTotal//2)
 
     ## resets all data for the Game, this method was created because it was
     #  preferable than having overhead with creating a brand new instance and garbage collection
@@ -76,7 +70,7 @@ class Game(object):
         while True:
             self.numSetsMade = 0
             self.numSetsTotal = 0
-            self.numHints = 2
+            self.numHints = 3 if self.gamediff == Difficulty.ADVANCED else 2
             del self.setsListTotal[:]
             del self.setsMadeSoFar[:]
             del self.cardChoices[:]
@@ -201,6 +195,7 @@ class Game(object):
             return False
         if self.gamediff != difficulty:
             if self.gamediff == Difficulty.BEGINNER or difficulty == Difficulty.BEGINNER:
+                self.deckManager.collectCardsFromField(self.Field)
                 self.deckManager.switchDecks()
         self.gamediff = difficulty
         return True

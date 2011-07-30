@@ -9,48 +9,53 @@ class  SETUnitTestCase(unittest.TestCase):
 
     def setUp(self):
         self.testgame = Game()
-        self.testcard = Card(0,0,0,0)
 
+    #Test Card Class Functionality
     def testCardImageNumber0(self):
-        self.assertEqual(self.testcard.getCardImgNumber(),0)
+        testCard = Card(0,0,0,0)
+        self.assertEqual(testCard.getCardImgNumber(),0)
 
     def testCardImageNumber1(self):
-        self.testcard.shading = 1
-        self.assertEqual(self.testcard.getCardImgNumber(),27)
+        testCard = Card(1,0,0,0)
+        self.assertEqual(testCard.getCardImgNumber(),27)
 
     def testCardImageNumber2(self):
-        self.testcard.shading = 1
-        self.testcard.number = 2
-        self.assertEqual(self.testcard.getCardImgNumber(),29)
+        testCard = Card(1,0,0,2)
+        self.assertEqual(testCard.getCardImgNumber(),29)
 
     def testCardImageNumber3(self):
-        self.testcard.shading = 1
-        self.testcard.shape = 2
-        self.testcard.number = 3
-        self.assertEqual(self.testcard.number,0)
-        self.assertEqual(self.testcard.getCardImgNumber(),45)
+        testCard = Card(1,2,0,0)
+        testCard.number = 3
+        self.assertEqual(testCard.number,0)
+        self.assertEqual(testCard.getCardImgNumber(),45)
 
+    def testCardImageNumber4(self):
+
+        tempCard = Card(2,2,2,2)
+        self.assertEqual(tempCard.getCardImgNumber(),80)
+
+    #Test Game Functionality
     def testChangeToNovice(self):
         self.assertEqual(self.testgame.numSetsTotal,4)
 
-        self.testgame.changeGameDifficulty(Difficulty.NOVICE)
+        self.assertEqual(self.testgame.changeGameDifficulty(Difficulty.NOVICE),False)
         self.testgame.resetGame()
-        self.assertEqual(len(self.testgame.NormalDeck),72)
-        self.assertEqual(len(self.testgame.BeginnersDeck),27)
+        self.assertEqual(len(self.testgame.deckManager.normalDeck.deck),72)
+        self.assertEqual(len(self.testgame.deckManager.beginnerDeck.deck),27)
         self.assertEqual(self.testgame.numSetsTotal,4)
 
     def testChangeToBeginner(self):
-        self.testgame.changeGameDifficulty(Difficulty.BEGINNER)
+        self.assertEqual(self.testgame.changeGameDifficulty(Difficulty.BEGINNER),True)
         self.testgame.resetGame()
-        self.assertEqual(len(self.testgame.NormalDeck),81)
-        self.assertEqual(len(self.testgame.BeginnersDeck),18)
+        self.assertEqual(len(self.testgame.deckManager.normalDeck.deck),81)
+        self.assertEqual(len(self.testgame.deckManager.beginnerDeck.deck),18)
         self.assertEqual(self.testgame.numSetsTotal,4)
 
     def testChangeToAdvanced(self):
-        self.testgame.changeGameDifficulty(Difficulty.ADVANCED)
+        self.assertEqual(self.testgame.changeGameDifficulty(Difficulty.ADVANCED),True)
         self.testgame.resetGame()
-        self.assertEqual(len(self.testgame.NormalDeck),69)
-        self.assertEqual(len(self.testgame.BeginnersDeck),27)
+        self.assertEqual(len(self.testgame.deckManager.normalDeck.deck),69)
+        self.assertEqual(len(self.testgame.deckManager.beginnerDeck.deck),27)
         self.assertEqual(self.testgame.numSetsTotal,6)
 
     def testNumberOfSetsGenerated1(self):
