@@ -4,9 +4,9 @@ __date__ ="$Jun 7, 2011 11:15:55 PM$"
 from Field import Field
 from Card import Card
 from Difficulty import Difficulty
+from DeckManager import DeckManager
 
 import itertools
-import random
 
 ## Game object which performs most of the game's operations.
 #
@@ -55,26 +55,14 @@ class Game(object):
         self.setsListTotal = []
         self.setsMadeSoFar = []
         self.cardChoices = []
-        self.BeginnersDeck = []
-        self.NormalDeck = []
-        self.UseDeck = self.NormalDeck
+        self.deckManager = DeckManager()
         self.timedModeFlag = False
         self.gamediff = Difficulty.NOVICE
         self.timeddiff = 0
         self.numHints = 0
         self.Field = Field(3,4) if self.gamediff == Difficulty.ADVANCED else Field(3,3)
 
-        iter = itertools.product(xrange(3), repeat=4) #Generates the novice/advanced level's deck.
-        for i in iter:
-            self.NormalDeck.append(Card(i[0],i[1],i[2],i[3]))
-        random.shuffle(self.NormalDeck)
-
-        iter = itertools.product(xrange(3), repeat=3) #Generates the beginner level's deck.
-        for i in iter:
-            self.BeginnersDeck.append(Card(i[0],i[1],i[2],0))
-        random.shuffle(self.BeginnersDeck)
-
-        self.placeCardsOnField()
+        self.deckManager.placeCardsOnField(self.Field)
         if self.scanSetsOnField() != 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
             self.resetGame()
         self.numHints = int(not self.timedModeFlag) * (self.numSetsTotal//2) + int(self.timedModeFlag) * (self.numSetsTotal//2)
@@ -85,44 +73,24 @@ class Game(object):
     # @param self The object pointer
     def resetGame(self):
 
-        self.numSetsMade = 0
-        self.numSetsTotal = 0
-        self.numHints = 2
-        del self.setsListTotal[:]
-        del self.setsMadeSoFar[:]
-        del self.cardChoices[:]
+        while True:
+            self.numSetsMade = 0
+            self.numSetsTotal = 0
+            self.numHints = 2
+            del self.setsListTotal[:]
+            del self.setsMadeSoFar[:]
+            del self.cardChoices[:]
 
-        assert len(self.setsListTotal) == 0
-        assert len(self.setsMadeSoFar) == 0
-        assert len(self.cardChoices) == 0
+            assert len(self.setsListTotal) == 0
+            assert len(self.setsMadeSoFar) == 0
+            assert len(self.cardChoices) == 0
 
-        if len(self.NormalDeck) < 81: #Case 1: The cards in the field instance were from the normal deck and are being returned to the deck.
-            while len(self.Field):
-                for i in self.Field.pop():
-                    self.NormalDeck.append(i)
-            assert len(self.NormalDeck) == 81
-            random.shuffle(self.NormalDeck)
-        elif len(self.BeginnersDeck) < 27: #Case 2: The cards in the field instance were from the beginner's deck and are being returned to the deck.
-            while len(self.Field):
-                for i in self.Field.pop():
-                    self.BeginnersDeck.append(i)
-            assert len(self.BeginnersDeck) == 27
-            random.shuffle(self.BeginnersDeck)
-        else: #Default case: There shouldn't be default case...
-            assert False #Program should definitely not reach this statement
+            self.deckManager.collectCardsFromField(self.Field)
+            self.Field.reset(3,3+(1 if self.gamediff == Difficulty.ADVANCED else 0)) #reset the existing field instance rather than create a new instance (a new instance doesn't work for some reason)
+            self.deckManager.placeCardsOnField(self.Field)
             
-        self.Field.reset(3,3+(1 if self.gamediff == Difficulty.ADVANCED else 0)) #reset the existing field instance rather than create a new instance (a new instance doesn't work for some reason)
-        self.placeCardsOnField()
-        if self.scanSetsOnField() != 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
-            self.resetGame()
-        
-    ##Take cards from the top of the deck and place them in the (backend) field.
-    # @param self The object pointer
-    def placeCardsOnField(self):
-
-        for i in range(len(self.Field.cardField)):
-            for j in range(len(self.Field.cardField[0])):
-                self.Field.cardField[i][j] = self.UseDeck.pop()
+            if self.scanSetsOnField() == 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
+                break
 
     ##Checks over the (backend) _Field array to check all possible sets
     # @param self The object pointer
@@ -189,7 +157,7 @@ class Game(object):
     def validateSet(self):
 
         assert len(self.cardChoices)
-        choices = [i for i in self.cardChoices] #Create a copy of the choice list
+        choices = [i for i in self.cardChoices]
         if choices in self.setsMadeSoFar:
             return 1
         result = self.verifySet([self.Field[i//self.Field.cols()][i%self.Field.cols()] for i in self.cardChoices])
@@ -231,8 +199,10 @@ class Game(object):
     def changeGameDifficulty(self,difficulty):
         if self.gamediff == difficulty:
             return False
+        if self.gamediff != difficulty:
+            if self.gamediff == Difficulty.BEGINNER or difficulty == Difficulty.BEGINNER:
+                self.deckManager.switchDecks()
         self.gamediff = difficulty
-        self.UseDeck = self.BeginnersDeck if self.gamediff == Difficulty.BEGINNER else self.NormalDeck
         return True
 
     ##Helper method which calculates the numbers of sets remaining to find.
