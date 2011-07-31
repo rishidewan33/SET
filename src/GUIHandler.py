@@ -44,7 +44,7 @@ class GUIHandler:
         self.buttonField = None
         self.checkButtonField = None
         self.Game = game
-        self.Field = game.Field
+        self.Field = game.field
         assert self.Game
         assert self.Field
 
@@ -258,7 +258,7 @@ class GUIHandler:
         self.userSetsHeight = 0
         [i.destroy() for i in self.userSetsCreated.children.values()]
         self.Game.resetGame()
-        self.updateCardsOnField(self.Game.Field)
+        self.updateCardsOnField(self.Game.field)
         self.remainderLabel.config(text="There are %d set(s) remaining on the board." % self.Game.numSetsTotal)
         #print map(lambda ls:map(lambda x:x+1,ls),self.Game.setsListTotal)
 

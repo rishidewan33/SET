@@ -40,7 +40,7 @@ class Game(object):
     # Higher difficulties means less time to find sets. Game is in untimed mode by default
     ## @var numHints
     # Number of hints allotted to the user whenever a new game is started.
-    ## @var Field
+    ## @var field
     # An instance of a _Field object that the Game object uses to scan for sets,
     # reference field indices for card choices, etc.
 
@@ -56,15 +56,16 @@ class Game(object):
         self.gamediff = Difficulty.NOVICE
         self.timeddiff = 0
         self.numHints = 3 if self.gamediff == Difficulty.ADVANCED else 2
-        self.Field = Field(3,4) if self.gamediff == Difficulty.ADVANCED else Field(3,3)
+        self.field = Field(3,4) if self.gamediff == Difficulty.ADVANCED else Field(3,3)
 
-        self.deckManager.placeCardsOnField(self.Field)
+        self.deckManager.placeCardsOnField(self.field)
         if self.scanSetsOnField() != 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
             self.resetGame()
 
     ## resets all data for the Game, this method was created because it was
     #  preferable than having overhead with creating a brand new instance and garbage collection
-    #  If the number of sets found during the scan doesn't satisfy require 
+    #  If the number of sets found during the scan doesn't satisfy the required number of sets,
+    #  redo the reset.
     # @param self The object pointer
     def resetGame(self):
 
@@ -76,28 +77,29 @@ class Game(object):
             del self.setsMadeSoFar[:]
             del self.cardChoices[:]
 
-            self.deckManager.collectCardsFromField(self.Field)
-            self.Field.reset(3,3+(1 if self.gamediff == Difficulty.ADVANCED else 0)) #reset the existing field instance rather than create a new instance (a new instance doesn't work for some reason)
-            self.deckManager.placeCardsOnField(self.Field)
+            self.deckManager.collectCardsFromField(self.field)
+            self.field.reset(3,3+(1 if self.gamediff == Difficulty.ADVANCED else 0)) #reset the existing field instance rather than create a new instance (a new instance doesn't work for some reason)
+            self.deckManager.placeCardsOnField(self.field)
             
             if self.scanSetsOnField() == 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
                 break
 
-    ##Checks over the (backend) _Field array to check all possible sets
+    ##Checks over the field array to check all possible sets
     # @param self The object pointer
     # @return The number of sets found during the scan.
     def scanSetsOnField(self):
 
-        rows = len(self.Field)
-        cols = len(self.Field[0])
-        comb = itertools.combinations(xrange(rows*cols), 3)
-        for it in comb:
+        rows = len(self.field)
+        cols = len(self.field[0])
+        for it in itertools.combinations(xrange(rows*cols), 3):
             i,j,k = it[0],it[1],it[2]
-            c1 = self.Field[i//cols][i%cols]
-            c2 = self.Field[j//cols][j%cols]
-            c3 = self.Field[k//cols][k%cols]
+            c1 = self.field[i//cols][i%cols]
+            c2 = self.field[j//cols][j%cols]
+            c3 = self.field[k//cols][k%cols]
             if not self.verifySet([c1, c2, c3]):
                 self.setsListTotal.append([i, j, k])
+                if len(self.setsListTotal) == 4 + (2 if self.gamediff == Difficulty.ADVANCED else 0):
+                    break
         self.numSetsTotal = len(self.setsListTotal)
         return self.numSetsTotal
 
@@ -151,7 +153,7 @@ class Game(object):
         choices = [i for i in self.cardChoices]
         if choices in self.setsMadeSoFar:
             return 1
-        result = self.verifySet([self.Field[i//self.Field.cols()][i%self.Field.cols()] for i in self.cardChoices])
+        result = self.verifySet([self.field[i//self.field.cols()][i%self.field.cols()] for i in self.cardChoices])
         if not result:
             self.setsMadeSoFar.append(choices)
             self.numSetsMade+=1
@@ -192,7 +194,7 @@ class Game(object):
             return False
         if self.gamediff != difficulty:
             if self.gamediff == Difficulty.BEGINNER or difficulty == Difficulty.BEGINNER:
-                self.deckManager.collectCardsFromField(self.Field)
+                self.deckManager.collectCardsFromField(self.field)
                 self.deckManager.switchDecks()
         self.gamediff = difficulty
         return True
