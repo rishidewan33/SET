@@ -5,6 +5,7 @@ from Field import Field
 from Card import Card
 from Difficulty import Difficulty
 from DeckManager import DeckManager
+from HintErrorCode import HintErrorCode
 
 import itertools
 
@@ -74,10 +75,6 @@ class Game(object):
             del self.setsListTotal[:]
             del self.setsMadeSoFar[:]
             del self.cardChoices[:]
-
-            assert len(self.setsListTotal) == 0
-            assert len(self.setsMadeSoFar) == 0
-            assert len(self.cardChoices) == 0
 
             self.deckManager.collectCardsFromField(self.Field)
             self.Field.reset(3,3+(1 if self.gamediff == Difficulty.ADVANCED else 0)) #reset the existing field instance rather than create a new instance (a new instance doesn't work for some reason)
@@ -206,12 +203,12 @@ class Game(object):
 
     def callHint(self):
         if not self.numSetsRemaining():
-            return -2
+            return HintErrorCode.GAMEOVER
         if not self.numHints:
-            return -1
+            return HintErrorCode.OUTOFHINTS
         result = set(map(tuple,self.setsListTotal)) - set(map(tuple,self.setsMadeSoFar))
         if len(result) == 1:
-            return -3
+            return HintErrorCode.LASTSET
         result2 = set(result.pop()) - set(self.cardChoices)
         self.numHints-=1
         return result2.pop()

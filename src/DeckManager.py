@@ -77,5 +77,5 @@ class BeginnerDeck(Deck):
         Deck.__init__(self)
         iter = itertools.product(xrange(3), repeat=3) #Generates the beginner level's deck.
         for i in iter:
-            self.deck.append(Card(i[0],i[1],i[2],0))
+            self.deck.append(Card(0,i[0],i[1],i[2]))
         random.shuffle(self.deck)
