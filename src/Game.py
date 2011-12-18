@@ -201,7 +201,7 @@ class Game(object):
 
     ##Helper method which calculates the numbers of sets remaining to find.
     # @param self The Object Pointer
-    # @return The number of sets remaining on the field, or a negative number representing an error number.
+    # @return The number of sets remaining on the field, or an error code representing a specific error.
 
     def callHint(self):
         if not self.numSetsRemaining():
@@ -209,8 +209,6 @@ class Game(object):
         if not self.numHints:
             return HintErrorCode.OUTOFHINTS
         result = set(map(tuple,self.setsListTotal)) - set(map(tuple,self.setsMadeSoFar))
-        if len(result) == 1:
-            return HintErrorCode.LASTSET
         result2 = set(result.pop()) - set(self.cardChoices)
         self.numHints-=1
         return result2.pop()
